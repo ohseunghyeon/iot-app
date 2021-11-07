@@ -19,12 +19,10 @@ const LoginScreen = ({ navigation }) => {
   const [userEmail, setUserEmail] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [errortext, setErrortext] = useState('');
 
   const passwordInputRef = createRef();
 
   const handleSubmitPress = async () => {
-    setErrortext('');
     if (!userEmail) {
       alert('Please fill Email');
       return;
@@ -37,13 +35,25 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const response = await axios.request({
+      const loginRes = await axios.request({
         method: 'POST',
         url: 'http://192.168.50.167:3000/auth/login',
         // url: 'https://postercolo.synology.me/auth/login',
         data: { email: userEmail, password: userPassword }
-      })
-      AsyncStorage.setItem('user', response.data.access_token);
+      });
+
+      await AsyncStorage.setItem('access_token', loginRes.data.access_token);
+
+      const profileRes = await axios.request({
+        method: 'GET',
+        url: 'http://192.168.50.167:3000/users/profile',
+        headers: {
+          Authorization: `Bearer ${loginRes.data.access_token}`,
+        },
+      });
+
+      await AsyncStorage.setItem('user', JSON.stringify(profileRes.data));
+
       navigation.replace('DrawerNavigationRoutes');
     } catch (error) {
       if (error?.response?.data?.statusCode === 401) {
@@ -107,11 +117,6 @@ const LoginScreen = ({ navigation }) => {
                 returnKeyType="next"
               />
             </View>
-            {errortext != '' ? (
-              <Text style={styles.errorTextStyle}>
-                {errortext}
-              </Text>
-            ) : null}
             <TouchableOpacity
               style={styles.buttonStyle}
               activeOpacity={0.5}
