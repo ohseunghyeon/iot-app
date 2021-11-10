@@ -17,13 +17,15 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+      "bundleIdentifier": "io.github.ohseunghyeon.iotapp"
     },
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FFFFFF"
-      }
+      },
+      "package": "io.github.ohseunghyeon.iotapp"
     },
     "web": {
       "favicon": "./assets/favicon.png"
