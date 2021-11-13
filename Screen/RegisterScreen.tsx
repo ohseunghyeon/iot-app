@@ -14,12 +14,12 @@ import {
   TouchableOpacity,
   ScrollView,
 } from 'react-native';
-import axios from 'axios';
+import request from '../util/axios';
 
 import Loader from './Components/Loader';
 
 const RegisterScreen = (props) => {
-  const [email, setUserEmail] = useState('');
+  const [identifier, setUserIdentifier] = useState('');
   const [password, setUserPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [errortext, setErrortext] = useState('');
@@ -28,15 +28,15 @@ const RegisterScreen = (props) => {
     setIsRegistraionSuccess
   ] = useState(false);
 
-  const emailInputRef = createRef();
+  const identifierInputRef = createRef();
   const ageInputRef = createRef();
   const addressInputRef = createRef();
   const passwordInputRef = createRef();
 
   const handleSubmitButton = async () => {
     setErrortext('');
-    if (!email) {
-      alert('Please fill Email');
+    if (!identifier) {
+      alert('Please fill ID');
       return;
     }
     if (!password) {
@@ -44,20 +44,19 @@ const RegisterScreen = (props) => {
       return;
     }
 
-    setLoading(true);
 
     try {
-      const response = await axios.request({
+      const response = await request({
         method: 'POST',
-        url: 'http://192.168.50.167:3000/users',
-        data: { email, password }
+        url: '/users',
+        data: { identifier, password }
       });
       setIsRegistraionSuccess(true);
     } catch (error) {
       console.error(error.response.data);
+    } finally {
+      setLoading(true);
     }
-
-    setLoading(false);
   };
 
   if (isRegistraionSuccess) {
@@ -97,12 +96,12 @@ const RegisterScreen = (props) => {
           <View style={styles.SectionStyle}>
             <TextInput
               style={styles.inputStyle}
-              onChangeText={(UserEmail) => setUserEmail(UserEmail)}
+              onChangeText={(userIdentifier) => setUserIdentifier(userIdentifier)}
               underlineColorAndroid="#f000"
-              placeholder="Enter Email"
+              placeholder="Enter ID"
               placeholderTextColor="#8b9cb5"
-              keyboardType="email-address"
-              ref={emailInputRef}
+              // keyboardType="email-address"
+              ref={identifierInputRef}
               returnKeyType="next"
               onSubmitEditing={() =>
                 passwordInputRef.current &&

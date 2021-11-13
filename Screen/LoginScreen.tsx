@@ -9,22 +9,22 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
 } from 'react-native';
-import axios from 'axios';
 
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import Loader from './Components/Loader';
+import request from '../util/axios';
 
 const LoginScreen = ({ navigation }) => {
-  const [userEmail, setUserEmail] = useState('');
+  const [userIdentifier, setUserIdentifier] = useState('');
   const [userPassword, setUserPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const passwordInputRef = createRef();
 
   const handleSubmitPress = async () => {
-    if (!userEmail) {
-      alert('Please fill Email');
+    if (!userIdentifier) {
+      alert('Please fill ID');
       return;
     }
     if (!userPassword) {
@@ -35,35 +35,33 @@ const LoginScreen = ({ navigation }) => {
     setLoading(true);
 
     try {
-      const loginRes = await axios.request({
+      const loginResult = await request({
         method: 'POST',
-        url: 'http://192.168.50.167:3000/auth/login',
-        // url: 'https://postercolo.synology.me/auth/login',
-        data: { email: userEmail, password: userPassword }
-      });
+        url: '/auth/login',
+        data: { identifier: userIdentifier, password: userPassword }
+      })
 
-      await AsyncStorage.setItem('access_token', loginRes.data.access_token);
+      await AsyncStorage.setItem('access_token', loginResult.access_token);
 
-      const profileRes = await axios.request({
+      const profile = await request({
         method: 'GET',
-        url: 'http://192.168.50.167:3000/users/profile',
-        headers: {
-          Authorization: `Bearer ${loginRes.data.access_token}`,
-        },
+        url: '/users/profile',
       });
 
-      await AsyncStorage.setItem('user', JSON.stringify(profileRes.data));
+      await AsyncStorage.setItem('user', JSON.stringify(profile));
+
+      setLoading(false);
 
       navigation.replace('DrawerNavigationRoutes');
     } catch (error) {
       if (error?.response?.data?.statusCode === 401) {
-        console.error('Invalid email or password');
+        console.error('Invalid id or password');
       } else {
         console.error(error?.response?.data ?? error);
       }
+      setLoading(false);
     }
 
-    setLoading(false);
   };
 
   return (
@@ -84,13 +82,13 @@ const LoginScreen = ({ navigation }) => {
             <View style={styles.SectionStyle}>
               <TextInput
                 style={styles.inputStyle}
-                onChangeText={(UserEmail) =>
-                  setUserEmail(UserEmail)
+                onChangeText={(UserIdentifier) =>
+                  setUserIdentifier(UserIdentifier)
                 }
-                placeholder="Enter Email" //dummy@abc.com
+                placeholder="Enter ID" //dummy@abc.com
                 placeholderTextColor="gray"
                 autoCapitalize="none"
-                keyboardType="email-address"
+                // keyboardType=""
                 returnKeyType="next"
                 onSubmitEditing={() =>
                   passwordInputRef.current &&

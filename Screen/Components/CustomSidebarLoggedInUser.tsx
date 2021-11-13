@@ -25,11 +25,11 @@ export default function CustomSidebarLoggedInUser() {
     <View style={stylesSidebar.profileHeader}>
       <View style={stylesSidebar.profileHeaderPicCircle}>
         <Text style={{ fontSize: 25, color: 'black' }}>
-          {user?.email?.charAt(0)?.toUpperCase()}
+          {user?.identifier?.charAt(0)?.toUpperCase()}
         </Text>
       </View>
       <Text style={stylesSidebar.profileHeaderText}>
-        {user?.email}
+        {user?.identifier}
       </Text>
     </View>
   )
