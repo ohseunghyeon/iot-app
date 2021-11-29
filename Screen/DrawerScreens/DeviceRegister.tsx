@@ -37,13 +37,25 @@ export default function DeviceRegister({ navigation }) {
   };
 
   const addDevice = function (device: Device) {
-    const existingDevice = devices.find(d => d.id === device.id);
-    if (!existingDevice) {
-      setDevices([
-        ...devices,
-        device
-      ]);
-    }
+    setDevices(oldDevices => {
+      const foundDevice = oldDevices.find(d => d.id === device.id)
+      if (foundDevice) {
+        console.log(device.localName);
+        if (foundDevice.localName !== device.localName) {
+          return [
+            ...oldDevices,
+            device
+          ];
+        } else {
+          return oldDevices;
+        }
+      } else {
+        return [
+          ...oldDevices,
+          device
+        ];
+      }
+    });
   }
 
   const scanAndConnect = () => {
