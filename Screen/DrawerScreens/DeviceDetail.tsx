@@ -12,7 +12,7 @@ export default function DeviceDetail(param: any) {
   const setWindowOpenPercent = async (openPercent: number) => {
     try {
       setLoading(true);
-
+      setOpenPercent(openPercent);
       await request({
         method: 'PUT',
         url: `/users/devices/state`,
@@ -48,7 +48,6 @@ export default function DeviceDetail(param: any) {
             let numberedInput = Number(input);
             if (numberedInput < 0) numberedInput = 0;
             if (numberedInput > 100) numberedInput = 100;
-            setOpenPercent(numberedInput);
             device.state.openPercent = numberedInput;
           }}
           value={openPercent.toString()}
