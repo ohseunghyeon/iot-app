@@ -6,7 +6,7 @@ import request from '../../util/axios';
 
 export default function DeviceDetail(param: any) {
   const device: Device = param.route?.params?.item;
-  const [openPercent, setOpenPercent] = useState(device.state.openPercent);
+  const [openPercent, setOpenPercent] = useState(device.state.openPercent ?? 0);
   const [loading, setLoading] = useState(false);
 
   const setWindowOpenPercent = async (openPercent: number) => {

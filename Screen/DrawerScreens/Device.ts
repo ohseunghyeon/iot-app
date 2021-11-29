@@ -3,7 +3,7 @@ export enum DeviceType {
   slidingWindow = 0,
 }
 
-interface WindowState {
+export interface WindowState {
   openPercent: number;
 }
 

@@ -2,13 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, ScrollView, RefreshControl, Text, SafeAreaView, FlatList, TouchableOpacity, Image } from 'react-native';
 
 import request from '../../util/axios';
-import { Device, DeviceType } from './Device';
+import { Device, DeviceType, WindowState } from './Device';
 
 interface DeviceFromServer {
   id: number;
   mac_address: string;
   type: DeviceType;
-  state: Object
+  state: WindowState
 }
 
 const DevicesScreen = (props) => {
