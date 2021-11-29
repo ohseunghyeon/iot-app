@@ -3,8 +3,7 @@ import { View, Image, Text, TouchableOpacity } from 'react-native';
 
 const DeviceRegisterModal = (props) => {
   const openDeviceRegister = () => {
-    console.log(1234);
-    props.navigationProps.push('DeviceRegister')
+    props.navigation.push('DeviceRegister')
   };
 
   return (

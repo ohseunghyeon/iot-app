@@ -4,7 +4,14 @@ import { StyleSheet, View, ScrollView, RefreshControl, Text, SafeAreaView, FlatL
 import request from '../../util/axios';
 import { Device, DeviceType } from './Device';
 
-const DevicesScreen = () => {
+interface DeviceFromServer {
+  id: number;
+  mac_address: string;
+  type: DeviceType;
+  state: Object
+}
+
+const DevicesScreen = (props) => {
   const [devices, setDevices] = useState<Device[]>([]);
   const [refreshing, setRefreshing] = useState(false);
 
@@ -16,11 +23,17 @@ const DevicesScreen = () => {
   const getDevices = async () => {
     console.log('Fetch user devices');
     try {
-      const devices: { id: number, mac_address: string, type: number }[] = await request({
+      const devices: DeviceFromServer[] = await request({
         method: 'GET',
         url: '/users/devices',
       });
-      setDevices(devices.map(device => new Device(device.id, device.mac_address, device.type)));
+      console.log(devices)
+      setDevices(devices.map(device => new Device({
+        id: device.id,
+        macAddress: device.mac_address,
+        type: device.type,
+        state: device.state,
+      })));
     } catch (e) {
       console.log(e?.response.data);
     }
@@ -30,6 +43,11 @@ const DevicesScreen = () => {
     setRefreshing(true);
     getDevices().finally(() => { setRefreshing(false); });
   }, []);
+
+  const openDeviceDetail = async (item: Device) => {
+    await getDevices();
+    props.navigation.push('DeviceDetail', { item })
+  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -51,19 +69,20 @@ const DevicesScreen = () => {
                   case DeviceType.slidingWindow: return (
                     <TouchableOpacity
                       style={styles.deviceView}
-                    // onPress={askToRegister.bind(null, item)}
+                      onPress={openDeviceDetail.bind(null, item)}
                     >
                       <Image
                         source={require('../../assets/window.png')}
                         style={styles.deviceImage}
                       />
                       <Text style={styles.deviceType}>Sliding Window</Text>
-                      <Text style={styles.deviceName}>{item.mac_address}</Text>
+                      <Text style={styles.deviceName}>{item.macAddress}</Text>
                     </TouchableOpacity >
                   )
                   default: return <Text>Unknown</Text>;
                 }
               }}
+              keyExtractor={(item) => item.macAddress}
             />
             : <View
               style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>

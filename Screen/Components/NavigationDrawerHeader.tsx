@@ -7,7 +7,7 @@ import { View, Image, TouchableOpacity } from 'react-native';
 
 const NavigationDrawerHeader = (props) => {
   const toggleDrawer = () => {
-    props.navigationProps.toggleDrawer();
+    props.navigation.toggleDrawer();
   };
 
   return (

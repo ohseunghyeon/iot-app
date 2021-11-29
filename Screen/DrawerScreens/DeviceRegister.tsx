@@ -1,17 +1,40 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, Text, TouchableOpacity, Image, Alert } from "react-native";
+import React, { useEffect, useState, useRef } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, Button, Image, Alert, FlatList } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { Device } from 'react-native-ble-plx';
-import { FlatList } from 'react-native-gesture-handler';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+// import { FlatList } from 'react-native-gesture-handler';
+import base64 from 'react-native-base64';
 
 import { manager } from '../../util/bleManager';
 import request from '../../util/axios';
+import Dialog from 'react-native-dialog';
 
 const WINDOW_SERVICE_UUID = 'ff8b2c15-74a6-468e-a114-6df49275290d';
+const WINDOW_CHARACTERISTIC_UUID = 'ff8b2c16-74a6-468e-a114-6df49275290d';
 
-export default function DeviceRegister() {
+const characteristicByService = new Map();
+characteristicByService.set(WINDOW_SERVICE_UUID, WINDOW_CHARACTERISTIC_UUID);
+
+export default function DeviceRegister({ navigation }) {
   const [devices, setDevices] = useState<Device[]>([]);
+  const [visible, setVisible] = useState(false);
+  const [selectedDevice, setSelectedDevice] = useState<Device>();
+  const [ssid, setSsid] = useState('');
+  const [pw, setPass] = useState('');
+
+  const handleCancel = () => {
+    setVisible(false);
+  };
+
+  const handleConnect = () => {
+    if (!selectedDevice) {
+      alert('selected device not found');
+      return;
+    }
+
+    connectWiFi(selectedDevice, ssid, pw)
+    setVisible(false);
+  };
 
   const addDevice = function (device: Device) {
     const existingDevice = devices.find(d => d.id === device.id);
@@ -69,9 +92,47 @@ export default function DeviceRegister() {
       if (res.errorCode === 'ERR_REGISTERED_TO_OTHER') {
         askToForceRegister(device);
       }
+      return;
     }
 
     // 와이파이 등록 화면으로 이동
+    setSelectedDevice(device);
+    setVisible(true);
+  }
+
+  const connectWiFi = async (device: Device, ssid: string, pw: string) => {
+    try {
+      const isDeviceConnected = await manager.isDeviceConnected(device.id);
+      console.log('isDeviceConnected', isDeviceConnected);
+      if (!isDeviceConnected) {
+        manager.stopDeviceScan();
+        await device.connect();
+      }
+
+      const serviceUUID = device?.serviceUUIDs?.[0];
+      if (!serviceUUID) {
+        throw new Error('Service UUID not found');
+      }
+
+      console.log(1);
+      await device.discoverAllServicesAndCharacteristics();
+      console.log(2);
+
+      const response = await device.writeCharacteristicWithResponseForService(
+        serviceUUID,
+        characteristicByService.get(serviceUUID),
+        base64.encode(JSON.stringify({ ssid, pw }))
+      );
+
+      console.log('res', response);
+
+    } catch (e) {
+      console.log(e);
+      alert(e);
+    } finally {
+      await device.cancelConnection();
+      scanAndConnect();
+    }
   }
 
   useEffect(() => {
@@ -113,11 +174,28 @@ export default function DeviceRegister() {
         }}
         keyExtractor={device => device.id}
       />
+      <Dialog.Container visible={visible}>
+        <Dialog.Title>Connect your divice({selectedDevice?.localName}) to WiFi</Dialog.Title>
+        <Dialog.Input label="ssid"
+          onChangeText={(input) => setSsid(input)}
+        />
+        <Dialog.Input label="password"
+          onChangeText={(input) => setPass(input)}
+        />
+        <Dialog.Button label="Cancel" onPress={handleCancel} />
+        <Dialog.Button label="Connect" onPress={handleConnect} />
+      </Dialog.Container>
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: "#fff",
+    alignItems: "center",
+    justifyContent: "center",
+  },
   deviceView: {
     flexDirection: 'row',
     justifyContent: 'space-around',

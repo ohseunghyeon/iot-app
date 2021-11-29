@@ -14,6 +14,7 @@ import DeviceRegister from './DrawerScreens/DeviceRegister'
 import CustomSidebarMenu from './Components/CustomSidebarMenu';
 import NavigationDrawerHeader from './Components/NavigationDrawerHeader';
 import DeviceRegisterHeader from './Components/DeviceRegisterHeader';
+import DeviceDetail from './DrawerScreens/DeviceDetail';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -27,10 +28,10 @@ const devicesStack = ({ navigation }) => {
         options={{
           title: 'Devices', //Set Header Title
           headerLeft: () => (
-            <NavigationDrawerHeader navigationProps={navigation} />
+            <NavigationDrawerHeader navigation={navigation} />
           ),
           headerRight: () => (
-            <DeviceRegisterHeader navigationProps={navigation} />
+            <DeviceRegisterHeader navigation={navigation} />
           ),
           headerStyle: {
             backgroundColor: '#d2d2d2', //Set Header color
@@ -46,6 +47,20 @@ const devicesStack = ({ navigation }) => {
         component={DeviceRegister}
         options={{
           title: 'Register Device',
+          headerStyle: {
+            backgroundColor: '#d2d2d2', //Set Header color
+          },
+          headerTintColor: 'black',
+          headerTitleStyle: {
+            fontWeight: 'bold', //Set Header text style
+          },
+        }}
+      />
+      <Stack.Screen
+        name="DeviceDetail"
+        component={DeviceDetail}
+        options={{
+          title: 'Device Control',
           headerStyle: {
             backgroundColor: '#d2d2d2', //Set Header color
           },
