@@ -48,7 +48,7 @@ export default function DeviceDetail(param: any) {
             let numberedInput = Number(input);
             if (numberedInput < 0) numberedInput = 0;
             if (numberedInput > 100) numberedInput = 100;
-            device.state.openPercent = numberedInput;
+            setOpenPercent(numberedInput);
           }}
           value={openPercent.toString()}
           keyboardType={"number-pad"}
