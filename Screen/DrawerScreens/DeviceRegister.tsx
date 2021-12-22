@@ -40,7 +40,6 @@ export default function DeviceRegister({ navigation }) {
     setDevices(oldDevices => {
       const foundDevice = oldDevices.find(d => d.id === device.id)
       if (foundDevice) {
-        console.log(device.localName);
         if (foundDevice.localName !== device.localName) {
           return [
             ...oldDevices,
