@@ -1,5 +1,5 @@
 import React, { useState } from "react"
-import { View, Text, Button, TextInput, StyleSheet, ActivityIndicator } from "react-native"
+import { View, Text, Button, TextInput, StyleSheet, ActivityIndicator, Alert } from "react-native"
 import { Device } from "./Device";
 
 import request from '../../util/axios';
@@ -8,6 +8,7 @@ export default function DeviceDetail(param: any) {
   const device: Device = param.route?.params?.item;
   const [openPercent, setOpenPercent] = useState(device.state.openPercent ?? 0);
   const [loading, setLoading] = useState(false);
+  const [name, setName] = useState(device.meta.name);
 
   const setWindowOpenPercent = async (openPercent: number) => {
     try {
@@ -28,10 +29,34 @@ export default function DeviceDetail(param: any) {
     }
   }
 
+  const setDeviceName = async () => {
+    await request({
+      method: 'PUT',
+      url: `/users/devices/meta`,
+      data: {
+        device,
+        meta: { name }
+      }
+    });
+
+    alert('Updated name successfuly');
+  }
+
   return (
     <View style={{ flex: 1, padding: 20 }}>
       <View style={{ marginBottom: 20 }}>
-        <Text>MAC address {device.macAddress}</Text>
+        <View style={{ flexDirection: 'row' }}>
+          <Text>Name: </Text>
+          <TextInput
+            style={{ ...styles.inputBox, width: 150 }}
+            value={name}
+            onChangeText={(input) => {
+              setName(input);
+            }}
+          />
+          <Button color="black" title="Update" onPress={setDeviceName}></Button>
+        </View>
+        <Text>MAC address: {device.macAddress}</Text>
         <Text>Type: {device.type === 0 ? 'Window' : 'unknown'}</Text>
       </View>
       <Text style={{ textAlign: "center", marginBottom: 10 }}>Command</Text>

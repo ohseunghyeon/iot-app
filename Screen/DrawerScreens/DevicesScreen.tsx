@@ -1,24 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View, ScrollView, RefreshControl, Text, SafeAreaView, FlatList, TouchableOpacity, Image } from 'react-native';
+import { useIsFocused } from "@react-navigation/native";
 
 import request from '../../util/axios';
-import { Device, DeviceType, WindowState } from './Device';
+import { Device, DeviceType, WindowState, WindowMeta } from './Device';
 
 interface DeviceFromServer {
   id: number;
   mac_address: string;
   type: DeviceType;
-  state: WindowState
+  state: WindowState;
+  meta: WindowMeta;
 }
 
 const DevicesScreen = (props) => {
   const [devices, setDevices] = useState<Device[]>([]);
   const [refreshing, setRefreshing] = useState(false);
+  const isFocused = useIsFocused();
 
   useEffect(() => {
     setRefreshing(true);
     getDevices().finally(() => { setRefreshing(false); });
-  }, []);
+  }, [isFocused]);
 
   const getDevices = async () => {
     console.log('Fetch user devices');
@@ -33,6 +36,7 @@ const DevicesScreen = (props) => {
         macAddress: device.mac_address,
         type: device.type,
         state: device.state,
+        meta: device.meta,
       })));
     } catch (e) {
       console.log(e?.response.data);
@@ -76,7 +80,7 @@ const DevicesScreen = (props) => {
                         style={styles.deviceImage}
                       />
                       <Text style={styles.deviceType}>Sliding Window</Text>
-                      <Text style={styles.deviceName}>{item.macAddress}</Text>
+                      <Text style={styles.deviceName}>{item.meta.name ?? item.macAddress}</Text>
                     </TouchableOpacity >
                   )
                   default: return <Text>Unknown</Text>;
