@@ -2,7 +2,7 @@ import axios, { AxiosRequestConfig } from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const instance = axios.create({
-  baseURL: 'http://postercolo.synology.me:3000',
+  baseURL: 'https://iot-server.bsassassincat.duckdns.org/',
   // baseURL: 'http://192.168.50.167:3000',
 });
 

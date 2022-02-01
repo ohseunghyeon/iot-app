@@ -67,7 +67,11 @@ const DevicesScreen = (props) => {
         {
           devices.length
             ? <FlatList
-              data={devices}
+              data={devices.sort((a, b) => {
+                if (a.meta?.name < b.meta?.name) return -1;
+                if (a.meta?.name > b.meta?.name) return 1;
+                return 0;
+              })}
               renderItem={({ item }: { item: Device }) => {
                 switch (item?.type) {
                   case DeviceType.slidingWindow: return (
@@ -79,8 +83,9 @@ const DevicesScreen = (props) => {
                         source={require('../../assets/window.png')}
                         style={styles.deviceImage}
                       />
-                      <Text style={styles.deviceType}>Sliding Window</Text>
                       <Text style={styles.deviceName}>{item.meta.name ?? item.macAddress}</Text>
+                      <Text style={styles.deviceState}>{item.state.openPercent} %</Text>
+                      {/* <Text style={styles.deviceType}>Sliding Window</Text> */}
                     </TouchableOpacity >
                   )
                   default: return <Text>Unknown</Text>;
@@ -116,7 +121,7 @@ const styles = StyleSheet.create({
   },
   deviceView: {
     flexDirection: 'row',
-    justifyContent: 'space-around',
+    // justifyContent: 's',
     marginTop: 20,
     marginLeft: 5,
     marginRight: 5,
@@ -128,13 +133,21 @@ const styles = StyleSheet.create({
   deviceImage: {
     width: 40,
     height: 40,
+    marginLeft: 10,
+    marginRight: 20,
   },
   deviceType: {
-    fontSize: 18,
+    fontSize: 9,
     textAlignVertical: 'center',
   },
+  deviceState: {
+    fontSize: 18,
+    textAlignVertical: 'center',
+    textAlign: 'right',
+  },
   deviceName: {
-    fontSize: 9,
-    textAlignVertical: 'center'
-  }
+    fontSize: 18,
+    textAlignVertical: 'center',
+    width: 230
+  },
 });

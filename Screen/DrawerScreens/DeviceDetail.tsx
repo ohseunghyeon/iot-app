@@ -58,6 +58,7 @@ export default function DeviceDetail(param: any) {
         </View>
         <Text>MAC address: {device.macAddress}</Text>
         <Text>Type: {device.type === 0 ? 'Window' : 'unknown'}</Text>
+        <Text>State: {device.state.openPercent} %</Text>
       </View>
       <Text style={{ textAlign: "center", marginBottom: 10 }}>Command</Text>
       <View style={{ flexDirection: 'row', marginBottom: 50, justifyContent: 'space-around' }}>
@@ -66,18 +67,21 @@ export default function DeviceDetail(param: any) {
       </View>
       <Text style={{ textAlign: "center", marginBottom: 10 }}>Set Open Percent from 0 to 100</Text>
       <View style={{ flexDirection: 'row', justifyContent: 'space-around' }}>
-        <TextInput
-          style={styles.inputBox}
-          textAlign="right"
-          onChangeText={(input) => {
-            let numberedInput = Number(input);
-            if (numberedInput < 0) numberedInput = 0;
-            if (numberedInput > 100) numberedInput = 100;
-            setOpenPercent(numberedInput);
-          }}
-          value={openPercent.toString()}
-          keyboardType={"number-pad"}
-        />
+        <View style={{ flexDirection: 'row' }}>
+          <TextInput
+            style={styles.inputBox}
+            textAlign="right"
+            onChangeText={(input) => {
+              let numberedInput = Number(input);
+              if (numberedInput < 0) numberedInput = 0;
+              if (numberedInput > 100) numberedInput = 100;
+              setOpenPercent(numberedInput);
+            }}
+            value={openPercent.toString()}
+            keyboardType={"number-pad"}
+          />
+          <Text style={{ textAlignVertical: 'center' }}> %</Text>
+        </View>
         <Button color="black" title="Set" onPress={setWindowOpenPercent.bind(null, openPercent)} />
       </View>
       <ActivityIndicator animating={loading} color="black" />
