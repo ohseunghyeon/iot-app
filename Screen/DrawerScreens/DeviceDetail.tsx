@@ -42,6 +42,19 @@ export default function DeviceDetail(param: any) {
     alert('Updated name successfuly');
   }
 
+  const unlinkDevice = async () => {
+    await request({
+      method: 'DELETE',
+      url: '/users/devices',
+      data: {
+        id: device.id
+      }
+    });
+
+    alert(`Unlinked device id: ${device.id}, name: ${device.meta.name}`);
+    param.navigation.pop()
+  }
+
   return (
     <View style={{ flex: 1, padding: 20 }}>
       <View style={{ marginBottom: 20 }}>
@@ -82,7 +95,10 @@ export default function DeviceDetail(param: any) {
           />
           <Text style={{ textAlignVertical: 'center' }}> %</Text>
         </View>
-        <Button color="black" title="Set" onPress={setWindowOpenPercent.bind(null, openPercent)} />
+        <Button color="black" title="Sed" onPress={setWindowOpenPercent.bind(null, openPercent)} />
+      </View>
+      <View style={{ padding: 100 }}>
+        <Button color="black" title="Disconnect device" onPress={unlinkDevice}></Button>
       </View>
       <ActivityIndicator animating={loading} color="black" />
     </View>
