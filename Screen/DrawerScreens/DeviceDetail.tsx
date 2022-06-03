@@ -43,16 +43,28 @@ export default function DeviceDetail(param: any) {
   }
 
   const unlinkDevice = async () => {
-    await request({
-      method: 'DELETE',
-      url: '/users/devices',
-      data: {
-        id: device.id
-      }
-    });
+    Alert.alert(
+      "Unlink Device",
+      "Do you want to unlink this device?",
+      [
+        {
+          text: "Yes", onPress: async () => {
+            await request({
+              method: 'DELETE',
+              url: '/users/devices',
+              data: {
+                id: device.id
+              }
+            });
 
-    alert(`Unlinked device id: ${device.id}, name: ${device.meta.name}`);
-    param.navigation.pop()
+            alert(`Unlinked device id: ${device.id}, name: ${device.meta.name}`);
+            param.navigation.pop()
+
+          }
+        },
+        { text: "No", style: "cancel" }
+      ]
+    );
   }
 
   return (
