@@ -107,7 +107,7 @@ export default function DeviceDetail(param: any) {
           />
           <Text style={{ textAlignVertical: 'center' }}> %</Text>
         </View>
-        <Button color="black" title="Sed" onPress={setWindowOpenPercent.bind(null, openPercent)} />
+        <Button color="black" title="Set" onPress={setWindowOpenPercent.bind(null, openPercent)} />
       </View>
       <View style={{ padding: 100 }}>
         <Button color="black" title="Disconnect device" onPress={unlinkDevice}></Button>

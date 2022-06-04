@@ -2,6 +2,7 @@
 cd android
 <!-- ./gradlew bundleRelease -->
 ./gradlew assembleRelease
+./gradlew bundleRelease
 
 npx react-native run-android --variant=release
 
